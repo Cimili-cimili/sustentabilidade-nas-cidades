@@ -8,7 +8,7 @@ const perguntas = [
   {
     enunciado:
       "No seu primeiro dia, você se depara com o principal problema da cidade: o trânsito congestionado e a alta emissão de carbono dos veículos. Você precisa decidir onde investir o orçamento inicial de transporte.",
-    alternativas: [" Investir na modernização do transporte público, criando faixas exclusivas para ônibus elétricos rápidos e ciclovias integradas.", "Subsidiar a transição de carros particulares para veículos elétricos, instalando postos de recarga rápida por toda a cidade"],
+    alternativas: [" Investir na modernização do transporte público, criando faixas exclusivas para ônibus elétricos rápidos e ciclovias integradas.", "Subsidiar a transição de carros particulares para veículos elétricos, instalando postos de recarga rápida por toda a cidade."],
   },
   {
     enunciado:
@@ -58,6 +58,15 @@ let perguntaAtual;
 function mostraPergunta() {
   perguntaAtual = perguntas[atual];
   caixaPerguntas.textContent = perguntaAtual.enunciado;
+  mostraAlternativas();
+}
+
+function mostraAlternativas() {
+  for (const alternativa of perguntaAtual.alternativas) {
+    const botaoAlternativas = document.createElement("button");
+    botaoAlternativas.textContent = alternativa;
+    caixaAlternativas.appendChild(botaoAlternativas);
+  }
 }
 
 mostraPergunta();
