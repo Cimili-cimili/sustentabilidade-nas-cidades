@@ -48,8 +48,9 @@ const perguntas = [
       " Manter a matriz mista atual para garantir a estabilidade econômica das indústrias, prometendo neutralizar o carbono através do plantio massivo de árvores.",
       "Planejar o fechamento gradual das fontes fósseis, com apoio para trabalhadores e metas de energia renovável.",
     ],
-    },
-    {
+    alternativaGameOver: 1,
+  },
+  {
     enunciado:
       "O centro tecnológico e os carros elétricos tornaram a cidade moderna, mas a periferia continua esquecida e sofrendo com apagões frequentes pela falta de infraestrutura energética.",
     alternativas: [
@@ -63,6 +64,9 @@ const perguntas = [
 let atual = 0;
 let perguntaAtual;
 
+const botaoReiniciar = document.createElement("button");
+botaoReiniciar.textContent = "Começar do início";
+botaoReiniciar.addEventListener("click", reiniciaJogo);
 
 function mostraPergunta() {
   if (atual >= perguntas.length) {
@@ -76,14 +80,43 @@ function mostraPergunta() {
   mostraAlternativas();
 }
 
+function mostraResultado() {
+  mostraFim("Você fez sua parte e tornou o mundo um lugar melhor.");
+}
+
+function mostraGameOver() {
+  mostraFim("Game over");
+}
+
+function mostraFim(mensagem) {
+  caixaPerguntas.hidden = true;
+  caixaAlternativas.hidden = true;
+  textoResultado.textContent = mensagem;
+  caixaResultado.appendChild(botaoReiniciar);
+  caixaResultado.hidden = false;
+}
+
+function reiniciaJogo() {
+  atual = 0;
+  caixaResultado.hidden = true;
+  caixaPerguntas.hidden = false;
+  caixaAlternativas.hidden = false;
+  mostraPergunta();
+}
+
 caixaResultado.hidden = true;
 mostraPergunta();
 
 function mostraAlternativas() {
-  for (const alternativa of perguntaAtual.alternativas) {
+  for (const [indice, alternativa] of perguntaAtual.alternativas.entries()) {
     const botaoAlternativas = document.createElement("button");
     botaoAlternativas.textContent = alternativa;
     botaoAlternativas.addEventListener("click", function () {
+      if (indice === perguntaAtual.alternativaGameOver) {
+        mostraGameOver();
+        return;
+      }
+
       atual++;
       mostraPergunta();
     });
