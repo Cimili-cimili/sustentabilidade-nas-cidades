@@ -9,9 +9,14 @@ const perguntas = [
       "No seu primeiro dia, você se depara com o principal problema da cidade: o trânsito congestionado e a alta emissão de carbono dos veículos. Você precisa decidir onde investir o orçamento inicial de transporte.",
     alternativas: [
       " Investir na modernização do transporte público, criando faixas exclusivas para ônibus elétricos rápidos e ciclovias integradas.",
-      "Subsidiar a transição de carros particulares para veículos elétricos, instalando postos de recarga rápida por toda a cidade.",
+      "Subsidiar exclusivamente carros particulares elétricos e abandonar investimentos no transporte coletivo.",
       "Ampliar calçadas e criar zonas de baixo tráfego para incentivar deslocamentos a pé e de bicicleta.",
     ],
+    gameOver: 1,
+    continuar: 0,
+    rotaAlternativa: 2,
+    proximo: 1,
+    proximoAlternativo: 3,
   },
   {
     enunciado:
@@ -21,24 +26,39 @@ const perguntas = [
       "Contratar uma grande empresa privada para construir uma usina de incineração moderna que transforma lixo em energia.",
       "Implantar compostagem comunitária e ampliar a coleta de resíduos orgânicos nos bairros.",
     ],
+    gameOver: 1,
+    continuar: 0,
+    rotaAlternativa: 2,
+    proximo: 2,
+    proximoAlternativo: 3,
   },
   {
     enunciado:
       "A transição para carros elétricos atraiu empresas de tecnologia, mas o centro da cidade sofre com o descarte ilegal de lixo eletrônico e baterias velhas. Os rios correm risco de contaminação.",
     alternativas: [
       "Implementar uma lei rígida de logística reversa, forçando as empresas de tecnologia a recolherem e reciclarem seus próprios produtos descartados.",
-      "Construir um centro tecnológico estatal de reciclagem avançada e tratamento de efluentes com recursos públicos.",
+      "Ignorar o descarte ilegal e permitir que baterias velhas continuem contaminando os rios.",
       "Criar pontos de coleta de eletrônicos nos bairros e campanhas para conserto e reuso de aparelhos.",
     ],
+    gameOver: 1,
+    continuar: 0,
+    rotaAlternativa: 2,
+    proximo: 5,
+    proximoAlternativo: 4,
   },
   {
     enunciado:
       "A cidade agora recicla e caminha para ser mais limpa, mas a demanda por energia elétrica disparou devido ao crescimento populacional. A matriz atual depende de usinas térmicas poluentes fora da cidade.",
     alternativas: [
       "Cobrir os tetos de todos os prédios públicos e habitacionais com painéis solares comunitários, distribuindo a energia de forma descentralizada.",
-      "Construir um grande parque eólico na área rural vizinha, centralizando a produção de energia limpa para abastecer a rede.",
+      "Construir um parque eólico sem avaliar os impactos ambientais, destruindo habitats na área rural.",
       "Reduzir o consumo com melhorias de eficiência energética em prédios e iluminação pública.",
     ],
+    gameOver: 1,
+    continuar: 0,
+    rotaAlternativa: 2,
+    proximo: 4,
+    proximoAlternativo: 5,
   },
   {
     enunciado:
@@ -48,21 +68,31 @@ const perguntas = [
       " Manter a matriz mista atual para garantir a estabilidade econômica das indústrias, prometendo neutralizar o carbono através do plantio massivo de árvores.",
       "Planejar o fechamento gradual das fontes fósseis, com apoio para trabalhadores e metas de energia renovável.",
     ],
-    alternativaGameOver: 1,
+    gameOver: 1,
+    continuar: 2,
+    rotaAlternativa: 0,
+    proximo: 5,
+    proximoAlternativo: null,
   },
   {
     enunciado:
       "O centro tecnológico e os carros elétricos tornaram a cidade moderna, mas a periferia continua esquecida e sofrendo com apagões frequentes pela falta de infraestrutura energética.",
     alternativas: [
-      "Privatizar o setor energético da cidade, permitindo que grandes corporações tragam investimentos bilionários em energia limpa de ponta.",
+      "Privatizar a energia e deixar os bairros periféricos sem acesso confiável para priorizar o lucro das empresas.",
       "Interromper os subsídios tecnológicos temporariamente e redirecionar a verba para criar microrredes de energia limpa voltadas para as comunidades carentes.",
       "Criar um programa público de eficiência energética e baterias comunitárias para reduzir os apagões.",
     ],
+    gameOver: 0,
+    continuar: 1,
+    rotaAlternativa: 2,
+    proximo: null,
+    proximoAlternativo: null,
   },
 ];
 
 let atual = 0;
 let perguntaAtual;
+let atalhoDe = null;
 
 const botaoReiniciar = document.createElement("button");
 botaoReiniciar.textContent = "Começar do início";
@@ -75,7 +105,12 @@ function mostraPergunta() {
   }
 
   perguntaAtual = perguntas[atual];
-  caixaPerguntas.textContent = perguntaAtual.enunciado;
+  const avisoAtalho =
+    atalhoDe === null
+      ? ""
+      : `Atalho: pulou da pergunta ${atalhoDe + 1} para a ${atual + 1}. `;
+  caixaPerguntas.textContent = `${avisoAtalho}Pergunta ${atual + 1} de ${perguntas.length}. ${perguntaAtual.enunciado}`;
+  atalhoDe = null;
   caixaAlternativas.textContent = "";
   mostraAlternativas();
 }
@@ -91,6 +126,7 @@ function mostraGameOver() {
 function mostraFim(mensagem) {
   caixaPerguntas.hidden = true;
   caixaAlternativas.hidden = true;
+  caixaAlternativas.textContent = "";
   textoResultado.textContent = mensagem;
   caixaResultado.appendChild(botaoReiniciar);
   caixaResultado.hidden = false;
@@ -98,6 +134,7 @@ function mostraFim(mensagem) {
 
 function reiniciaJogo() {
   atual = 0;
+  atalhoDe = null;
   caixaResultado.hidden = true;
   caixaPerguntas.hidden = false;
   caixaAlternativas.hidden = false;
@@ -112,12 +149,21 @@ function mostraAlternativas() {
     const botaoAlternativas = document.createElement("button");
     botaoAlternativas.textContent = alternativa;
     botaoAlternativas.addEventListener("click", function () {
-      if (indice === perguntaAtual.alternativaGameOver) {
+      if (indice === perguntaAtual.gameOver) {
         mostraGameOver();
         return;
       }
 
-      atual++;
+      const perguntaAnterior = atual;
+      const usouAtalho = indice === perguntaAtual.rotaAlternativa;
+      atual =
+        usouAtalho ? perguntaAtual.proximoAlternativo : perguntaAtual.proximo;
+      if (atual === null) {
+        mostraResultado();
+        return;
+      }
+
+      atalhoDe = usouAtalho ? perguntaAnterior : null;
       mostraPergunta();
     });
     caixaAlternativas.appendChild(botaoAlternativas);
