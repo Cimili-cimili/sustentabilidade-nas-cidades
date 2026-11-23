@@ -9,7 +9,9 @@ const perguntas = [
       "No seu primeiro dia, você se depara com o principal problema da cidade: o trânsito congestionado e a alta emissão de carbono dos veículos. Você precisa decidir onde investir o orçamento inicial de transporte.",
     alternativas: [
       " Investir na modernização do transporte público, criando faixas exclusivas para ônibus elétricos rápidos e ciclovias integradas.",
-       "Subsidiar a transição de carros particulares para veículos elétricos, instalando postos de recarga rápida por toda a cidade."],
+      "Subsidiar a transição de carros particulares para veículos elétricos, instalando postos de recarga rápida por toda a cidade.",
+      "Ampliar calçadas e criar zonas de baixo tráfego para incentivar deslocamentos a pé e de bicicleta.",
+    ],
   },
   {
     enunciado:
@@ -17,6 +19,7 @@ const perguntas = [
     alternativas: [
       "Criar um programa de coleta seletiva obrigatória com incentivos fiscais para os cidadãos e financiar cooperativas de catadores locais. ",
       "Contratar uma grande empresa privada para construir uma usina de incineração moderna que transforma lixo em energia.",
+      "Implantar compostagem comunitária e ampliar a coleta de resíduos orgânicos nos bairros.",
     ],
   },
   {
@@ -25,6 +28,7 @@ const perguntas = [
     alternativas: [
       "Implementar uma lei rígida de logística reversa, forçando as empresas de tecnologia a recolherem e reciclarem seus próprios produtos descartados.",
       "Construir um centro tecnológico estatal de reciclagem avançada e tratamento de efluentes com recursos públicos.",
+      "Criar pontos de coleta de eletrônicos nos bairros e campanhas para conserto e reuso de aparelhos.",
     ],
   },
   {
@@ -33,6 +37,7 @@ const perguntas = [
     alternativas: [
       "Cobrir os tetos de todos os prédios públicos e habitacionais com painéis solares comunitários, distribuindo a energia de forma descentralizada.",
       "Construir um grande parque eólico na área rural vizinha, centralizando a produção de energia limpa para abastecer a rede.",
+      "Reduzir o consumo com melhorias de eficiência energética em prédios e iluminação pública.",
     ],
   },
   {
@@ -41,6 +46,7 @@ const perguntas = [
     alternativas: [
       "Ceder à pressão popular e investir em energia solar em larga escala, mesmo que isso cause um endividamento temporário nos cofres públicos.",
       " Manter a matriz mista atual para garantir a estabilidade econômica das indústrias, prometendo neutralizar o carbono através do plantio massivo de árvores.",
+      "Planejar o fechamento gradual das fontes fósseis, com apoio para trabalhadores e metas de energia renovável.",
     ],
     },
     {
@@ -49,6 +55,7 @@ const perguntas = [
     alternativas: [
       "Privatizar o setor energético da cidade, permitindo que grandes corporações tragam investimentos bilionários em energia limpa de ponta.",
       "Interromper os subsídios tecnológicos temporariamente e redirecionar a verba para criar microrredes de energia limpa voltadas para as comunidades carentes.",
+      "Criar um programa público de eficiência energética e baterias comunitárias para reduzir os apagões.",
     ],
   },
 ];
@@ -65,7 +72,7 @@ function mostraPergunta() {
 
   perguntaAtual = perguntas[atual];
   caixaPerguntas.textContent = perguntaAtual.enunciado;
-  caixaAlternativas.replaceChildren();
+  caixaAlternativas.textContent = "";
   mostraAlternativas();
 }
 
