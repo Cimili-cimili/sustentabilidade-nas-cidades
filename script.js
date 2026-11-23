@@ -15,8 +15,6 @@ const perguntas = [
     gameOver: 1,
     continuar: 0,
     rotaAlternativa: 2,
-    proximo: 1,
-    proximoAlternativo: 3,
   },
   {
     enunciado:
@@ -29,8 +27,6 @@ const perguntas = [
     gameOver: 1,
     continuar: 0,
     rotaAlternativa: 2,
-    proximo: 2,
-    proximoAlternativo: 3,
   },
   {
     enunciado:
@@ -43,8 +39,6 @@ const perguntas = [
     gameOver: 1,
     continuar: 0,
     rotaAlternativa: 2,
-    proximo: 5,
-    proximoAlternativo: 4,
   },
   {
     enunciado:
@@ -57,8 +51,6 @@ const perguntas = [
     gameOver: 1,
     continuar: 0,
     rotaAlternativa: 2,
-    proximo: 4,
-    proximoAlternativo: 5,
   },
   {
     enunciado:
@@ -71,8 +63,6 @@ const perguntas = [
     gameOver: 1,
     continuar: 2,
     rotaAlternativa: 0,
-    proximo: 5,
-    proximoAlternativo: null,
   },
   {
     enunciado:
@@ -85,25 +75,24 @@ const perguntas = [
     gameOver: 0,
     continuar: 1,
     rotaAlternativa: 2,
-    proximo: null,
-    proximoAlternativo: null,
   },
 ];
 
 let atual = 0;
+let posicaoNoCaminho = 0;
+let caminhoAtual = [];
 let perguntaAtual;
 let atalhoDe = null;
+const caminhos = {
+  comunitario: [0, 1, 2, 3, 5],
+  tecnologia: [0, 3, 4, 2, 5],
+};
 
 const botaoReiniciar = document.createElement("button");
 botaoReiniciar.textContent = "Começar do início";
 botaoReiniciar.addEventListener("click", reiniciaJogo);
 
 function mostraPergunta() {
-  if (atual >= perguntas.length) {
-    mostraResultado();
-    return;
-  }
-
   perguntaAtual = perguntas[atual];
   const avisoAtalho =
     atalhoDe === null
@@ -113,6 +102,35 @@ function mostraPergunta() {
   atalhoDe = null;
   caixaAlternativas.textContent = "";
   mostraAlternativas();
+}
+
+function mostraEscolhaDeCaminho() {
+  caixaPerguntas.hidden = false;
+  caixaAlternativas.hidden = false;
+  caixaResultado.hidden = true;
+  caixaPerguntas.textContent = "Escolha o caminho que deseja seguir:";
+  caixaAlternativas.textContent = "";
+  criaBotaoCaminho(
+    "Caminho comunitário: transporte público e ações locais",
+    "comunitario",
+  );
+  criaBotaoCaminho(
+    "Caminho tecnológico: energia e inovação",
+    "tecnologia",
+  );
+}
+
+function criaBotaoCaminho(texto, caminho) {
+  const botao = document.createElement("button");
+  botao.textContent = texto;
+  botao.addEventListener("click", function () {
+    caminhoAtual = caminhos[caminho];
+    posicaoNoCaminho = 0;
+    atalhoDe = null;
+    atual = caminhoAtual[posicaoNoCaminho];
+    mostraPergunta();
+  });
+  caixaAlternativas.appendChild(botao);
 }
 
 function mostraResultado() {
@@ -134,15 +152,14 @@ function mostraFim(mensagem) {
 
 function reiniciaJogo() {
   atual = 0;
+  posicaoNoCaminho = 0;
+  caminhoAtual = [];
   atalhoDe = null;
-  caixaResultado.hidden = true;
-  caixaPerguntas.hidden = false;
-  caixaAlternativas.hidden = false;
-  mostraPergunta();
+  mostraEscolhaDeCaminho();
 }
 
 caixaResultado.hidden = true;
-mostraPergunta();
+mostraEscolhaDeCaminho();
 
 function mostraAlternativas() {
   for (const [indice, alternativa] of perguntaAtual.alternativas.entries()) {
@@ -156,13 +173,13 @@ function mostraAlternativas() {
 
       const perguntaAnterior = atual;
       const usouAtalho = indice === perguntaAtual.rotaAlternativa;
-      atual =
-        usouAtalho ? perguntaAtual.proximoAlternativo : perguntaAtual.proximo;
-      if (atual === null) {
+      posicaoNoCaminho += usouAtalho ? 2 : 1;
+      if (posicaoNoCaminho >= caminhoAtual.length) {
         mostraResultado();
         return;
       }
 
+      atual = caminhoAtual[posicaoNoCaminho];
       atalhoDe = usouAtalho ? perguntaAnterior : null;
       mostraPergunta();
     });
